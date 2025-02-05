@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "/logo.png";
-import { connect } from "react-redux";
+import { useNavigate } from "react-router";
+
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaInfoCircle } from "react-icons/fa";
 
 const LoginHeader = () => {
@@ -17,7 +18,7 @@ const LoginHeader = () => {
 
 const Login = () => {
 
-    
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repassword, setrepassword] = useState("");
@@ -28,6 +29,8 @@ const Login = () => {
 
     const isButtonDisabled = (state == 0 && (!email || !password)) || (state == 2 && (!email || email == "")) || (state == 1 && (isRePassword))
 
+    let navigate = useNavigate();
+
 
     console.log(email, state, (!email || email == ""), 'password', password, repassword, isRePassword)
 
@@ -37,6 +40,29 @@ const Login = () => {
         setrepassword("")
     }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const requestData = {
+            email: email,
+            password: password
+        };
+        let response_data;
+        try {
+            const response = await fetch('http://127.0.0.1:5000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            });
+            response_data = await response.json();
+            console.log(response_data)
+            
+            navigate("/welcome", { state: { data: response_data } });
+            
+
+        } catch (error) {
+            console.error('Error submitting the form:', error);
+        }
+    };
 
     const passwordVisibility = () => {
         sethidePassword((prevState) => !prevState);
@@ -103,6 +129,7 @@ const Login = () => {
                         {/* Submit Button */}
                         <button
                             type="submit"
+                            onClick={handleSubmit}
                             className={`${isButtonDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-red-700 hover:bg-red-600"
                                 } text-white text-lg font-semibold rounded-lg p-2.5 w-full transition duration-200`}
                             disabled={isButtonDisabled}

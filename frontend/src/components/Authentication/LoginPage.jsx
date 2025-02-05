@@ -1,8 +1,8 @@
-import React from 'react'
-import Login from '../components/Login'
-import Hero from '../components/Hero'
+import React from 'react';
+import Login from './Login';
+import Hero from './Hero';
 
-const HomeLayout = () => {
+const LoginPage = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen w-full">
       <div className="w-full md:w-1/2 flex justify-center items-center bg-gray-50 p-4">
@@ -13,7 +13,7 @@ const HomeLayout = () => {
         <Hero />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomeLayout;
+export default LoginPage;

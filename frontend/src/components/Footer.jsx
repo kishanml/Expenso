@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 
 const Footer = () => {
   return (
-    <div>
-      Footer
-    </div>
-  )
-}
+    <footer className="bg-gray-800 text-white text-center p-4 mt-4">
+      <p>&copy; 2025 My App</p>
+    </footer>
+  );
+};
 
-export default Footer
+export default Footer;
