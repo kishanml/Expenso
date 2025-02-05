@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/Authentication/LoginPage";
-import Homepage from "./components/Home/Homepage";
 import WelcomePage from "./components/Home/WelcomePage";
 import ExpenseTable from "./components/AddExpense/ExpenseTable";
 
