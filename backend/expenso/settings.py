@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-zp%wv_k!ew7c)!#c6mdx9fb!7r%lv3s)^!u(i@nc-85avcd!p@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -56,6 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = 'expenso.urls'
@@ -179,9 +181,10 @@ SIMPLE_JWT = {
 PASSWORD_RESET_TIMEOUT = 900          # 900 Sec = 15 Min
 
 # CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5174",
-#     "http://127.0.0.1:5174",
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
 # ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+
 CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:8000','http://localhost:8000' ]
