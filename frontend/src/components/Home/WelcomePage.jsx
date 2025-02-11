@@ -7,6 +7,8 @@ import { SiMoneygram } from 'react-icons/si';
 import { TbReportMoney } from 'react-icons/tb';
 import { GoCommentDiscussion } from 'react-icons/go';
 import { GrPieChart } from 'react-icons/gr';
+import NavBar from '../NavBar';
+import Footer from '../Footer';
 
 const buttons = [
     { to: '/add-expense', icon: LuCircleFadingPlus, label: 'Add Expense' },
@@ -30,6 +32,7 @@ const ButtonLink = ({ to, icon: Icon, label }) => (
 
 const WelcomePage = () => {
     return (
+        <>
         <div className="min-h-screen px-4 sm:px-10 md:px-20 flex flex-col items-center">
             <div className="w-full max-w-4xl flex justify-between items-center py-8">
                 <p className="text-2xl sm:text-3xl font-medium text-center">Welcome Kishan Mishra</p>
@@ -42,6 +45,7 @@ const WelcomePage = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 
