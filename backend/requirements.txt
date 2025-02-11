@@ -1,0 +1,16 @@
+asgiref
+Django
+django-cors-headers
+django-dotenv
+djangorestframework
+djangorestframework-simplejwt
+PyJWT
+pytz
+psycopg2-binary
+gevent
+virtualenv
+sqlparse
+tzdata
+gunicorn
+python-dotenv
+django-admin-interface
