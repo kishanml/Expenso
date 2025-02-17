@@ -314,6 +314,7 @@ const Login = () => {
                                     : "bg-red-700 hover:bg-red-600"
                             } text-white text-lg font-semibold rounded-lg p-2.5 w-full transition duration-200`}
                             disabled={isButtonDisabled}
+                            onClick={handleRegistrationSubmit}
                         >
                             Create Account
                         </button>
@@ -362,6 +363,7 @@ const Login = () => {
                                     : "bg-red-700 hover:bg-red-600"
                             } text-white text-lg font-semibold rounded-lg p-2.5 w-full transition duration-200`}
                             disabled={isButtonDisabled}
+                            onClick={handleForgetPasswordSubmit}
                         >
                             Reset password
                         </button>
