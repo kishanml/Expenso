@@ -39,23 +39,31 @@ Create user with encrypted password
 
 Grant all access and privileges to the user for the database expenso
 
--   `CREATE USER expenso_user WITH ENCRYPTED PASSWORD 'expenso@123';`
+-   `GRANT ALL PRIVILEGES ON DATABASE expenso TO expenso_user;`
 
 Make the database owner to the user
 
 -   `ALTER DATABASE expenso OWNER TO expenso_user;`
 
+
+If stuck with error : psycopg2.errors.InsufficientPrivilege: permission denied for table <table_name> 
+`GRANT postgres TO expenso_user;
+`
 ## 7. Create the Django migrations
 
 -   `python3 manage.py makemigrations`
 
 ## 8. Migrate the changes
 
--   `python3 manage.py Migrate`
+-   `python3 manage.py migrate`
 
 ## 9. Create a superuser for the admin panel view
 
 -   `python3 manage.py createsuperuser`
+
+If stuck with error : psycopg2.ProgrammingError: relation <table_name> does not exist
+`python3 manage.py migrate --run-syncdb`
+
 
 Provide all necessary details
 

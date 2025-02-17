@@ -17,7 +17,7 @@ export default function App() {
             <>
               <NavBar />
               <WelcomePage />
-              <Footer />
+              {/* <Footer /> */}
             </>
           }
         />
@@ -28,7 +28,7 @@ export default function App() {
             <>
               <NavBar />
               <ExpenseTable />
-              <Footer />
+              {/* <Footer /> */}
             </>
           }
         />
