@@ -18,9 +18,9 @@ class AbstractBaseModel(models.Model):
 
 #  Custom User Manager
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, tc, is_verified = False,password=None, password2=None):
+    def create_user(self, email, name,  is_verified = False,password=None, password2=None):
         """
-        Creates and saves a User with the given email, name, tc and password.
+        Creates and saves a User with the given email, name and password.
         """
         if not email:
             raise ValueError('User must have an email address')
@@ -28,7 +28,6 @@ class UserManager(BaseUserManager):
         user = self.model(
             email=self.normalize_email(email),
             name=name,
-            tc=tc,
             is_verified = is_verified,
         )
 
@@ -36,15 +35,14 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name,tc=True, password=None):
+    def create_superuser(self, email, name, password=None):
         """
-        Creates and saves a superuser with the given email, name, tc and password.
+        Creates and saves a superuser with the given email, name and password.
         """
         user = self.create_user(
             email,
             password=password,
             name=name,
-            tc=tc,
             is_verified = True
         )
         user.is_admin = True
@@ -60,7 +58,6 @@ class User(AbstractBaseUser):
         unique=True,
     )
     name = models.CharField(max_length=200)
-    tc = models.BooleanField(default= True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
