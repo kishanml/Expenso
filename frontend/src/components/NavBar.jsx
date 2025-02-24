@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import logo from "/logo.png";
+import { useSelector } from 'react-redux';
 
 const NavBar = () => {
   const location = useLocation();
@@ -11,10 +12,11 @@ const NavBar = () => {
     return location.pathname === path ? 'text-[#c6252b]' : 'text-gray-500';
   };
 
+  const userData = useSelector(state => state.user_info);
   return (
     <nav className="bg-white text-black p-4 mb-5 border-b-2 ">
       <div className="flex justify-between items-center">
-      <Link to="/welcome">
+      <Link to="/">
         <div className='flex'>
         <img src={logo} alt="Logo" width={60} />
         <h1 className="text-3xl px-3 font-bold text-[#c6252b]">EXPENSO</h1>
@@ -32,7 +34,7 @@ const NavBar = () => {
           className="flex items-center space-x-2 p-2 rounded-full bg-gray-200 hover:bg-gray-300"
         >
           <CgProfile className="text-2xl" />
-          <span className="font-semibold text-lg px-1">Admin</span>
+          <span className="font-semibold text-lg px-1">{userData.name} </span>
         </button>
 
         {isMenuOpen && (

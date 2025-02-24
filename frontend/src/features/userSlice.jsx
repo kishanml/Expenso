@@ -4,9 +4,9 @@ const initialState = {
     id: "",
     name: "",
     email: "",
-    contact_number: "",
-    game_ids: {},
-    role_type: "BASIC",
+    // contact_number: "",
+    // game_ids: {},
+    // role_type: "BASIC",
 };
 
 export const userSlice = createSlice({

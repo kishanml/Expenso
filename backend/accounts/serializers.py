@@ -19,24 +19,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
 
-    # Validating Password and Confirm Password while Registration
-    def validate(self, attrs):
-        password = attrs.get('password')
-        password2 = attrs.get('password2')
-        if password != password2:
-            raise serializers.ValidationError("Password and Confirm Password doesn't match")
-        elif re.fullmatch(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$', password):
-            pass
-        else:
-            raise serializers.ValidationError("Password doesn't match the required format")
-        # email = attrs.get('email')
-        # n = random.randint(1, 10000)
-        # uid = urlsafe_base64_encode(force_bytes(n))
-        # print('Encoded UID', uid)
-        # token = PasswordResetTokenGenerator().make_token()
-
-        return attrs
-
     def create(self, validate_data):
         return User.objects.create_user(**validate_data)
 
@@ -73,7 +55,7 @@ class UserChangePasswordSerializer(serializers.Serializer):
         user = self.context.get('user')
         if password != password2:
             raise serializers.ValidationError("Password and Confirm Password doesn't match")
-        elif not re.fullmatch(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$', password):
+        elif not re.fullmatch(r'^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$', password):
             raise serializers.ValidationError("Password doesn't match the required format")
         user.set_password(password)
         user.save()
@@ -123,9 +105,11 @@ class UserPasswordResetSerializer(serializers.Serializer):
 
             uid = self.context.get('uid')
             token = self.context.get('token')
+            print(password,password2)
             if password != password2:
                 raise serializers.ValidationError("Password and Confirm Password doesn't match")
-            elif not re.fullmatch(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$', password):
+
+            elif not re.fullmatch(r'^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$', password):
                 raise serializers.ValidationError("Password doesn't match the required format")
             
 

@@ -15,6 +15,9 @@ from rest_framework import generics
 from django.urls import reverse
 import jwt
 from django.conf import settings
+
+from django.template.loader import render_to_string
+
 # Generate Token Manually
 
 
@@ -31,30 +34,47 @@ class UserRegistrationView(APIView):
 
     def post(self, request, format=None):
         serializer = UserRegistrationSerializer(data=request.data)
-
+        if User.objects.filter(email = request.data["email"]).exists():
+            return  Response({"errors": {
+                                    "email": [
+                                        "Email already exists"
+                                    ]
+                                }   
+                            }, status = status.HTTP_400_BAD_REQUEST)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         token = get_tokens_for_user(user)["access"]
         # print(token)
-        # current_site = get_current_site(request).domain
-        # print(current_site)
-        # if current_site == "localhost":
-        #     current_site = "http://127.0.0.1:8000"
-        # if current_site == "localhost:8000":
-        #     current_site ="http://127.0.0.1:8000"
-        # relativeLink = reverse('email-verify')
-        # # link = 'http://'+current_site+relativeLink+"?token="+token
-        # link = current_site+relativeLink+"?token="+token
-        link = 'http://127.0.0.1:5173/verify-email/?token='+token
-        body = 'Click Following Link to Activate your ProSquad Account.\n\n\n'+link
+        current_site = get_current_site(request).domain
+        print(current_site)
+        if current_site == "localhost":
+            current_site = "http://127.0.0.1:8000"
+        if current_site == "localhost:8000":
+            current_site ="http://127.0.0.1:8000"
+        relativeLink = reverse('email-verify')
+
+
+        link = 'http://'+current_site+relativeLink+"?token="+token
+        link = current_site+relativeLink+"?token="+token
+        # link = 'http://127.0.0.1:5173/verify-email/?token='+token
+        # body = 'Click Following Link to Activate your Expenso Account.\n\n\n'+link
+        
+        html_message = render_to_string(
+            'email/email_verification.html',  
+            {
+                'username': user.name,
+                'link': link
+            }
+        )
+
         data = {
-            'subject': ' Verify your account',
-            'body': body,
+            'subject': 'Verify your Expenso account',
+            'body': 'Please use an HTML-enabled email client to view this message.',
+            'html_message': html_message, 
             'to_email': user.email
         }
-
-        Util.send_email(data)
-        return Response({'msg': 'User Registered Successfully , Please check your email for account Activation'}, status=status.HTTP_201_CREATED)
+        Util.send_email_to_user(data)
+        return Response({'msg': 'User registration successful. Please check your email to activate your account.'}, status=status.HTTP_201_CREATED)
 
 
 class VerifyEmail(generics.GenericAPIView):
@@ -95,11 +115,11 @@ class UserLoginView(APIView):
         if user is not None:
             token = get_tokens_for_user(user)
             if not user.is_verified:
-                return Response({'errors': {'non_field_errors': ['Account not activated, Please acitvate your account first']}}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'errors': {'non_field_errors': ['Account not activated. Please activate your account first.']}}, status=status.HTTP_404_NOT_FOUND)
             else:
                 return Response({'token': token, 'msg': 'Login Success'}, status=status.HTTP_200_OK)
         else:
-            return Response({'errors': {'non_field_errors': ['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'errors': {'non_field_errors': ['Invalid email or password. Please check and try again.']}}, status=status.HTTP_404_NOT_FOUND)
 
 
 class UserProfileView(APIView):

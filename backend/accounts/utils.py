@@ -1,18 +1,19 @@
-from django.core.mail import EmailMessage
+from django.core.mail import send_mail
 import os
 
 
 class Util:
     @staticmethod
-    def send_email(data):
-        email = EmailMessage(
+    def send_email_to_user(data):
+        send_mail(    
             subject=data['subject'],
-            body=data['body'],
-            from_email="donotreply.prosquad <do_not_reply@prosquad.com>",
-            to=[data['to_email']]
+            message=data['body'],
+            from_email="team@expenso.com",
+            recipient_list=[data['to_email']],
+            html_message=data['html_message']
         )
-        # print(email)
-        email.send()
+        # # print(email)
+        # email.send()
 
 
 

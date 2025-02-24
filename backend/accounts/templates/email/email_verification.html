@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; background-color: #D3D3D3; margin: 0; padding: 0; color: #333;">
+
+    <!-- Outer wrapper for background -->
+    <table role="presentation" style="width: 100%; background-color: #D3D3D3; padding: 0; margin: 0;">
+        <tr>
+            <td align="center" style="padding-top: 20px; padding-bottom: 10px;">
+                <a style="text-decoration:none" href="http://127.0.0.1:5173"><p style="font-weight: bold; font-size: 1.5rem; color: #c6252b; margin: 0;">Expenso</p></a>
+                <!-- <img src="https://raw.githubusercontent.com/kishanml/PublicDataset/refs/heads/main/logo.png" alt="Expenso Logo" style="max-width: 100px; margin-top: 10px;" /> -->
+            </td>
+        </tr>
+    </table>
+
+    <!-- Main container with email content -->
+    <table role="presentation" style="width: 100%; background-color: #D3D3D3; padding: 0; margin: 0;">
+        <tr>
+            <td align="center">
+                <table role="presentation" style="background-color: #ffffff; width: 90%; max-width: 500px; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); text-align: center;">
+                    <tr>
+                        <td>
+                            <h1 style="font-size: 1.8rem; color: #333; margin-bottom: 20px;">You're nearly there, {{ username }}!</h1>
+                            <p style="font-size: 1rem; line-height: 1.6; margin-bottom: 15px;">Verify your email address to login and get started.</p>
+                            <a href="{{ link }}" target="_blank" style="background-color: #c6252b; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 1rem; display: inline-block; margin-top: 20px;">Verify email</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Footer with About Expenso and address outside the main container -->
+    <table role="presentation" style="width: 100%; background-color: #D3D3D3; padding: 0; margin: 0;">
+        <tr>
+            <td align="center" style="padding-top: 20px;">
+                <footer style="font-size: 0.9rem; color: #777; text-align: center;">
+                    <a href="http://127.0.0.1:5173" style="color: #c6252b; text-decoration: none;">About Expenso</a>
+                    <p style="margin-top: 5px;">Pune, Maharashtra, India 411045</p>
+                </footer>
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>
