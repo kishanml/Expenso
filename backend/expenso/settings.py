@@ -190,7 +190,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:8000','http://localhost:8000' ]
 
 
-# STATIC_URL = "static/"
+STATIC_URL = "static/"
 # STATICFILES_DIRS = [
 #     BASE_DIR / "static",
 #     "/var/www/static/",

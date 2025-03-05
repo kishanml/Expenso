@@ -36,6 +36,8 @@ const ButtonLink = ({ to, icon: Icon, label }) => (
 const WelcomePage = () => {
     const { access_token } = getToken();
 
+    console.log("welcom page")
+
     // const [data, { isSuccess }] = useGetLoggedUserQuery(access_token);
     const { data, isSuccess } = useGetLoggedUserQuery(access_token);
 

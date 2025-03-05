@@ -1,33 +1,70 @@
 import React, { useState } from "react";
 import LoginHeader from "./LoginHeader";
-import { Link } from "react-router-dom";
-import { FaEnvelope } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { FaEnvelope ,FaSpinner} from "react-icons/fa";
+
+import { useSendPasswordResetEmailMutation } from "../../services/userAuthApi";
 
 
 const ForgotPassword = () => {
 
 
     const [email, setemail] = useState("")
+    const navigate = useNavigate();
+
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+
     const isButtonDisabled = !email
 
-    const handleForgetPasswordSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const res = await sendPasswordResetEmail(form);
-        // console.log(res);
-        if (res.error) {
-            console.log(res.error.data.errors);
-        }
 
+    const [ForgotPassword, { isForgotPasswordLoading }] = useSendPasswordResetEmailMutation();
+
+
+    const handleForgetPasswordSubmit = async (e) => {
+
+        e.preventDefault();
+
+        setIsLoading(true);
+        setSuccessMessage("");
+        setErrorMessage("");
+
+        const res = await ForgotPassword({ email: email });
+        setIsLoading(false);
+
+        console.log(res);
+        if (res.error) {
+            setErrorMessage(res.error.data.errors.email[0]);
+        }
         if (res.data) {
-            console.log(res.data);
-            document.getElementById("password-reset-form").reset();
+            setSuccessMessage(res.data.msg);
+        }
+        if (res.data) {
+            setTimeout(() => {
+                navigate("/")
+            }, 3000);
         }
     };
     return (
         <div className="flex flex-col gap-y-6 w-full max-w-md">
             <LoginHeader />
-            <form className="flex flex-col gap-y-5">
+            <form className="flex flex-col gap-y-5" onSubmit={handleForgetPasswordSubmit}>
+
+                {/* Show error message */}
+                {errorMessage && (
+                    <div className="bg-red-500 text-white p-4 rounded-lg mt-4 text-center">
+                        {errorMessage}
+                    </div>
+                )}
+
+                {/* Show success message */}
+                {successMessage && (
+                    <div className="bg-green-500 text-white p-4 rounded-lg mt-4 text-center">
+                        {successMessage}
+                    </div>
+                )}
                 <h1 className="font-bold text-2xl justify-start">
                     Reset your password
                 </h1>
@@ -56,7 +93,11 @@ const ForgotPassword = () => {
                         } text-white text-lg font-semibold rounded-lg p-2.5 w-full transition duration-200`}
                     disabled={isButtonDisabled}
                 >
-                    Reset password
+                    {isLoading ? (
+                        <FaSpinner className="w-5 h-5 animate-spin mx-auto" />
+                    ) : (
+                        "Reset Password"
+                    )}
                 </button>
 
                 <span className="ml-2 text-center">
@@ -70,6 +111,8 @@ const ForgotPassword = () => {
                     </Link>
                 </span>
             </form>
+
+
 
         </div>
     )

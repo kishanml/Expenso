@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import LoginHeader from "./LoginHeader";
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaInfoCircle, FaUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaInfoCircle, FaUser,FaSpinner } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import { useRegisterUserMutation } from "../../services/userAuthApi";
-import { FaSpinner } from 'react-icons/fa'; 
 
 
 const CreateAccount = () => {
@@ -49,6 +48,8 @@ const CreateAccount = () => {
         }
     };
 
+    const navigate = useNavigate()
+
     // Handle Registration APIs
 
     const [registerUser, { isRegistrationLoading }] = useRegisterUserMutation();
@@ -75,17 +76,12 @@ const CreateAccount = () => {
         }
         if (res.data) {
             setTimeout(() => {
-                setSuccessMessage("");  
-                setErrorMessage("");    
-                setform({ name: "", email: "", password: "", password2: "" }); 
-
-                
-            }, 5000);
+                navigate("/")
+            },3000);
         }
 
     }
 
-  
 
 return (
     <div className="flex flex-col gap-y-6 w-full max-w-md">

@@ -4,13 +4,15 @@ from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeErr
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from accounts.utils import Util
-import re
+from django.template.loader import render_to_string
 
+import re
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     # We are writing this becoz we need confirm password field in our Registratin Request
-    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    password2 = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         model = User
@@ -34,17 +36,21 @@ class UserLoginSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id","email","name","is_admin"]
-        
+        fields = ["id", "email", "name", "is_admin"]
+
+
 class ProfileDataSerializers(serializers.ModelSerializer):
     class Meta:
-        model =  ProfileData
+        model = ProfileData
         fields = "__all__"
 
-class UserChangePasswordSerializer(serializers.Serializer):
-    password = serializers.CharField(max_length=255, style={'input_type': 'password'}, write_only=True)
 
-    password2 = serializers.CharField(max_length=255, style={'input_type': 'password'}, write_only=True)
+class UserChangePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(
+        max_length=255, style={'input_type': 'password'}, write_only=True)
+
+    password2 = serializers.CharField(
+        max_length=255, style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         fields = ['password', 'password2']
@@ -54,9 +60,11 @@ class UserChangePasswordSerializer(serializers.Serializer):
         password2 = attrs.get('password2')
         user = self.context.get('user')
         if password != password2:
-            raise serializers.ValidationError("Password and Confirm Password doesn't match")
+            raise serializers.ValidationError(
+                "Password and Confirm Password doesn't match")
         elif not re.fullmatch(r'^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$', password):
-            raise serializers.ValidationError("Password doesn't match the required format")
+            raise serializers.ValidationError(
+                "Password doesn't match the required format")
         user.set_password(password)
         user.save()
         return attrs
@@ -78,22 +86,32 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
             print('Password Reset Token', token)
             link = 'http://127.0.0.1:5173/reset/?uid='+uid+'&token='+token
             print('Password Reset Link', link)
+
+            html_message = render_to_string(
+                'email/reset_password.html',
+                {
+                    'link': link
+
+                }
+            )
             # Send Email
-            body = 'Click Following Link to Reset Your Password  \n\n\n'+ link
             data = {
-                'subject': 'Reset Your Password',
-                'body': body,
+                'subject': 'Reset your Expenso password',
+                'body': 'Please use an HTML-enabled email client to view this message.',
+                'html_message': html_message,
                 'to_email': user.email
             }
-            Util.send_email(data)
+            Util.send_email_to_user(data)
             return attrs
         else:
             raise serializers.ValidationError('You are not a Registered User')
 
 
 class UserPasswordResetSerializer(serializers.Serializer):
-    password = serializers.CharField(max_length=255, style={'input_type': 'password'}, write_only=True)
-    password2 = serializers.CharField(max_length=255, style={'input_type': 'password'}, write_only=True)
+    password = serializers.CharField(
+        max_length=255, style={'input_type': 'password'}, write_only=True)
+    password2 = serializers.CharField(
+        max_length=255, style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         fields = ['password', 'password2']
@@ -105,19 +123,21 @@ class UserPasswordResetSerializer(serializers.Serializer):
 
             uid = self.context.get('uid')
             token = self.context.get('token')
-            print(password,password2)
+            print(password, password2)
             if password != password2:
-                raise serializers.ValidationError("Password and Confirm Password doesn't match")
+                raise serializers.ValidationError(
+                    "Password and Confirm Password doesn't match")
 
             elif not re.fullmatch(r'^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$', password):
-                raise serializers.ValidationError("Password doesn't match the required format")
-            
+                raise serializers.ValidationError(
+                    "Password doesn't match the required format")
 
             id = smart_str(urlsafe_base64_decode(uid))
 
             user = User.objects.get(id=id)
             if not PasswordResetTokenGenerator().check_token(user, token):
-                raise serializers.ValidationError('Token is not Valid or Expired')
+                raise serializers.ValidationError(
+                    'Token is not Valid or Expired')
 
             user.set_password(password)
             user.save()

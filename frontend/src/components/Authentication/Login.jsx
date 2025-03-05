@@ -34,7 +34,7 @@ const Login = () => {
 
     useEffect(() => {
         if (Error) {
-            setform({ email: "", password: "", remember_me: false });
+            // setform({ email: "", password: "", remember_me: false });
         }
     }, [Error]); 
     const HandleErrorMsg = () => {
@@ -67,19 +67,19 @@ const Login = () => {
         if (response.error) {
 
             console.log('here', response.error.data.errors.non_field_errors[0])
-            // setopenErrorModal(true)
             setError(response.error.data.errors.non_field_errors[0])
         }
 
         if (response.data) {
             storeToken(response.data.token);
-            let { access_token } = getToken(); // Assume getToken is defined elsewhere
+            let { access_token } = getToken(); 
 
             dispatch(setUserToken({ access_token: access_token }));
+            console.log('here_already')
             setTimeout(() => {
-                navigate("/welcome", { replace : true });
-            }, 2000);
-            // navigate("/welcome", { state: { data: response.data } });
+                navigate("/welcome", {replace :true });
+            }, 3000);
+            console.log('done')
         }
     };
 
@@ -181,54 +181,7 @@ const Login = () => {
                         </span>
                     </h1>
                 </form>
-                {/* <Modal
-                    isOpen={openErrorModal}
-                    onRequestClose={closeErrorModal}
-                    style={{
-                        content: {
-                            backgroundColor: 'white',
-                            padding: '5px',
-                            borderRadius: '12px',
-                            // width: '400px',
-                            // height: '450px',
-                            margin: 'auto',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            position: 'relative',
-                            border: '2px solid #ddd', // Border inside the modal
-                            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)', // Soft shadow to make it pop
-                            transform: 'scale(1)', // For scaling effect on open
-                            transition: 'transform 0.3s ease-out', // Smooth transition
-                        },
-                        overlay: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Low opacity background
-                            zIndex: '1000', // Ensure modal is above other elements
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center', // Center the modal in the screen
-                        },
-                    }}
-                >
-                    <div className="p-4 rounded-xl border-2 border-gray-100 bg-neutral-100">
-                        <div className="flex items-center justify-center space-x-4 mb-4">
-                            <img
-                                src={errorImage}
-                                alt="Error"
-                                className="w-40 h-40 " // Styled image with rounded corners
-                            />
-                            <p className="text-red-500 font-semibold text-lg">{Error}</p>
-                        </div>
-
-                        <button
-                            onClick={closeErrorModal}
-                            className="bg-[#c6252b] text-white px-4 py-3 rounded-lg shadow-lg  transition-all duration-200 ease-in-out"
-                        >
-                            Okay
-                        </button>
-                    </div>
-                </Modal> */}
+               
             </div>
         </>
     );

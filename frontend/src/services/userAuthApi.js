@@ -58,7 +58,6 @@ export const userAuthApi = createApi({
 
         getLoggedUser: builder.query({
             query: (access_token) => {
-                console.log("coming heree")
                 return {
                     url: "profile/",
                     method: "GET",

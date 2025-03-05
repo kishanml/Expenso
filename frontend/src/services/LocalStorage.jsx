@@ -9,7 +9,6 @@ const storeToken = (value) => {
   const getToken = () => {
     let access_token = localStorage.getItem("access_token");
     let refresh_token = localStorage.getItem("refresh_token");
-  
     return { access_token, refresh_token };
   };
   

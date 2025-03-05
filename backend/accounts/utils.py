@@ -12,10 +12,7 @@ class Util:
             recipient_list=[data['to_email']],
             html_message=data['html_message']
         )
-        # # print(email)
-        # email.send()
-
-
+    
 
 CHANGE_PASSWORD_EMAIL_FORMAT = """
 

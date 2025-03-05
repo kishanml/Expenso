@@ -45,18 +45,17 @@ class UserRegistrationView(APIView):
         user = serializer.save()
         token = get_tokens_for_user(user)["access"]
         # print(token)
-        current_site = get_current_site(request).domain
-        print(current_site)
-        if current_site == "localhost":
-            current_site = "http://127.0.0.1:8000"
-        if current_site == "localhost:8000":
-            current_site ="http://127.0.0.1:8000"
+        # current_site = get_current_site(request).domain
+        # if current_site == "localhost":
+        #     current_site = "http://127.0.0.1:8000"
+        # if current_site == "localhost:8000":
+        #     current_site ="http://127.0.0.1:8000"
         relativeLink = reverse('email-verify')
 
 
-        link = 'http://'+current_site+relativeLink+"?token="+token
-        link = current_site+relativeLink+"?token="+token
-        # link = 'http://127.0.0.1:5173/verify-email/?token='+token
+        # link = 'http://'+current_site+relativeLink+"?token="+token
+        # link = current_site+relativeLink+"?token="+token
+        link = 'http://127.0.0.1:5173/verify-email/?token='+token
         # body = 'Click Following Link to Activate your Expenso Account.\n\n\n'+link
         
         html_message = render_to_string(
@@ -212,6 +211,7 @@ class SendPasswordResetEmailView(APIView):
     def post(self, request, format=None):
         serializer = SendPasswordResetEmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
         return Response({'msg': 'Password Reset link send. Please check your Email'}, status=status.HTTP_200_OK)
 
 
