@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaUser } from "react-icons/fa";
 import { FaAngleDown } from "react-icons/fa6";
+
 import logo from "/logo.png";
 import { useSelector } from 'react-redux';
 
@@ -14,9 +15,6 @@ const NavBar = ({ show }) => {
     return location.pathname === path ? 'text-[#c6252b]' : 'text-gray-500';
   }, [location.pathname]);
 
-  const adminStatus = useMemo(() => {
-    return userData?.is_admin === false ? 'BASIC' : 'ADMIN';
-  }, [userData?.is_admin]);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
@@ -44,16 +42,14 @@ const NavBar = ({ show }) => {
             >
               <div className='flex flex-row items-center gap-x-2'>
                 <FaUser className="text-lg text-gray-600 h-4 w-4" />
-                <span className="font-semibold text-sm text-gray-700 truncate max-w-[100px]">
+                <span className="font-semibold text-sm text-gray-700">
                   {userData?.name ? userData.name : 'User'}
                 </span>
-                <FaAngleDown className={`text-sm text-gray-600 transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : ''}`} />
+              <FaAngleDown/>
               </div>
-              {userData?.is_admin !== false && (
-                <span className={`text-xs font-normal px-2 py-0.5 rounded-full bg-opacity-60 ${adminStatus === 'ADMIN' ? 'bg-green-200 text-green-700' : 'bg-blue-200 text-blue-700'}`}>
-                  {adminStatus} - EXPENSO
+                <span className={`text-xs font-regular px-2 py-0.5 rounded-full `}>
+                  BASIC - EXPENSO
                 </span>
-              )}
             </button>
 
             {isMenuOpen && (
