@@ -12,7 +12,7 @@ class Expense(models.Model):
     user = models.ForeignKey(User, related_name='expenso_user',on_delete=models.SET(default_admin_user))
     transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPE_CHOICES)
     transaction_amount = models.FloatField(default=0)
-    transaction_date = models.DateField(null = True, blank = True)
+    transaction_date = models.DateTimeField(null = True, blank = True)
     payer_name = models.CharField(max_length=200)
     debit_category = models.CharField(max_length=10, choices=DEBIT_CATEGORY_CHOICES)
     sub_category = models.CharField(max_length=200) 

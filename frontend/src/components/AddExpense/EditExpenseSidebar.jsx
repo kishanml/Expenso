@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import { useAddExpenseMutation } from "../../services/expenseApi";
+import {
+    useGetExpenseByIdQuery,
+    useEditExpenseMutation,
+} from "../../services/expenseApi";
 import { useSelector } from "react-redux";
 
-const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
+const EditExpenseSidebar = ({ id, isopen, toggleSidebar }) => {
     const { access_token } = useSelector((state) => state.auth);
 
     const [formData, setFormData] = useState({
@@ -17,25 +20,38 @@ const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
         remarks: "",
     });
 
+    const { data, isSuccess } = useGetExpenseByIdQuery(
+        { access_token, id },
+        { refetchOnMountOrArgChange: true }
+    );
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const [addExpense, { isAddingExpenseLoading }] = useAddExpenseMutation();
+    const [editExpense, { isAddingExpenseLoading }] = useEditExpenseMutation();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         formData.transaction_type = formData.transaction_type.toLowerCase();
         formData.debit_category = formData.debit_category.toLowerCase();
 
-        const res = await addExpense({ expenseData: formData, access_token });
-
+        const res = await editExpense({ expenseData: formData, access_token });
         if (res.data.error === false) {
             toggleSidebar();
         }
 
         console.log(res);
     };
+
+    useEffect(() => {
+        if (data && isSuccess) {
+            if (data.error === false) {
+                setFormData(data.data);
+            }
+        }
+    }, [data, isSuccess]);
 
     return (
         <>
@@ -53,7 +69,7 @@ const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
             >
                 <div className="flex justify-between items-center border-b pb-3 mb-5 ">
                     <h1 className="text-2xl font-medium">
-                        Enter Transaction Details
+                        Edit Transaction Details
                     </h1>
                     <button onClick={toggleSidebar}>
                         <IoIosCloseCircleOutline
@@ -222,7 +238,7 @@ const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
                         type="submit"
                         className="w-full bg-red-500 text-white p-3 rounded font-medium"
                     >
-                        Add Transaction
+                        Edit Transaction
                     </button>
                 </form>
             </aside>
@@ -230,4 +246,4 @@ const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
     );
 };
 
-export default AddExpenseSidebar;
+export default EditExpenseSidebar;

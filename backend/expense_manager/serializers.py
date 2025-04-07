@@ -3,7 +3,7 @@ from expense_manager.models import *
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
-    transaction_date = serializers.DateField(format="%d/%m/%Y", input_formats=['%d/%m/%Y', 'iso-8601'])
+    transaction_date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M", input_formats=['%d/%m/%Y %H:%M', 'iso-8601'])
     
     class Meta:
         model = Expense

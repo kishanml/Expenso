@@ -202,7 +202,7 @@ class ExpenseManagerView(APIView):
         ret = self.edit_expense(expense_data, expense_id,  user)
         if ret["error"]:
             return Response(ret, status= status.HTTP_400_BAD_REQUEST)
-        return Response(ret, status= status.HTTP_201_CREATED)
+        return Response(ret, status= status.HTTP_200_OK)
     
 
     def delete(self, request):
