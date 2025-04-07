@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useAddExpenseMutation } from "../../services/expenseApi";
 import { useSelector } from "react-redux";
+import {getCurrentDateTimeLocal} from "../../constants/constant"
+
 
 const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
     const { access_token } = useSelector((state) => state.auth);
@@ -113,6 +115,7 @@ const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
                             name="transaction_date"
                             value={formData.transaction_date}
                             onChange={handleChange}
+                            max={getCurrentDateTimeLocal()}
                             className="p-2 border rounded"
                             required
                         />

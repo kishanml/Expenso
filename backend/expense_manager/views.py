@@ -183,6 +183,7 @@ class ExpenseManagerView(APIView):
                 expense = get_object_or_404(Expense, id=expense_id, user = user)
             else:   
                 expense = get_object_or_404(Expense, id=expense_id)
+                
             serializer = ExpenseSerializer(expense, data=expense_data, partial=True)
             if serializer.is_valid():
                 serializer.save()

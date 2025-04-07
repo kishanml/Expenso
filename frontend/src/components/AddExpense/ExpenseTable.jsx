@@ -5,26 +5,34 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import AddExpenseSidebar from "./AddExpenseSidebar";
 import { useSelector } from "react-redux";
 import {
-    useGetAllExpenseQuery,
+    // useGetAllExpenseQuery,
+    useLazyGetAllExpenseQuery,
     useDeleteExpenseMutation,
 } from "../../services/expenseApi";
 import EditExpenseSidebar from "./EditExpenseSidebar";
+import { format } from 'date-fns';
+import { IoMdAdd } from "react-icons/io";
+import { CiImport } from "react-icons/ci";
+import { IoPieChart } from "react-icons/io5";
+
+
+
 
 const ExpenseTable = () => {
     const { access_token } = useSelector((state) => state.auth);
 
-    const [selectedExpenses, setSelectedExpenses] = useState([]);
     const [openNewExpenseSidebar, setopenNewExpenseSidebar] = useState(false);
     const [openEditExpenseSidebar, setopenEditExpenseSidebar] = useState(false);
 
     const [expenses, setExpenses] = useState([]);
+    const [selectedExpenses, setSelectedExpenses] = useState([]);
+
+
+    const [deleteModal, setDeleteModal] = useState(false);
     const [editDeleteExpenseId, setEditDeleteExpenseId] = useState(null);
 
-    const { data, isSuccess } = useGetAllExpenseQuery({ access_token });
-    const [deleteExpense, { isLoading, isDeleteSuccess, isError }] =
-        useDeleteExpenseMutation();
-
-    // console.log("edit side bar", openEditExpenseSidebar);
+    const [trigger, { data, isSuccess }] = useLazyGetAllExpenseQuery({ access_token });
+    const [deleteExpense, { isLoading, isDeleteSuccess, isError }] = useDeleteExpenseMutation();
 
     const handleSelectAll = (event) => {
         const isSelected = event.target.checked;
@@ -43,14 +51,29 @@ const ExpenseTable = () => {
 
     const toggleSidebar = () => {
         setopenNewExpenseSidebar(!openNewExpenseSidebar);
-        console.log(openNewExpenseSidebar);
     };
     const toggleEditSidebar = () => {
         setopenEditExpenseSidebar(!openEditExpenseSidebar);
     };
 
+    const showDeleteModal = () => {
+        setDeleteModal(!deleteModal);
+    };
+
+    const formatDate = (dateString) => {
+        try {
+            const date = new Date(dateString);
+            return format(date, 'dd-MM-yyyy HH:mm');
+        } catch (error) {
+            console.error("Error formatting date:", error);
+            return dateString;
+        }
+    }
+
+
     const handleDeleteExpense = async () => {
         try {
+            console.log(editDeleteExpenseId)
             res = await deleteExpense({
                 id: editDeleteExpenseId,
                 access_token: access_token,
@@ -70,6 +93,10 @@ const ExpenseTable = () => {
         }
     }, [data, isSuccess]);
 
+    useEffect(() => {
+        trigger({ access_token })
+    }, [openNewExpenseSidebar, openEditExpenseSidebar, deleteModal]);
+
     return (
         <div className="w-full min-h-screen">
             <div className="flex flex-col mx-10">
@@ -88,16 +115,29 @@ const ExpenseTable = () => {
 
                         <div className="flex gap-x-2">
                             <button
-                                onClick={toggleSidebar}
-                                className="px-2 py-1 bg-[#c6252b] text-white rounded-lg"
+                                className="bg-[#c6252b] text-white rounded-lg flex items-center gap-2 px-4 py-2"
                             >
-                                Add Expense
+                                <CiImport className="text-white w-5 h-5" />
+                                Import
                             </button>
-                            <button className="px-2 py-1 bg-[#c6252b] text-white rounded-lg">
-                                Move to Dashboard
+                            <button
+                                onClick={toggleSidebar}
+                                className="bg-[#c6252b] text-white rounded-lg flex items-center gap-2 px-4 py-2"
+                            >
+                                <IoMdAdd className="text-white w-5 h-5" />
+                                Add
                             </button>
-                            <button className="px-2 py-1 bg-[#c6252b] text-white rounded-lg">
-                                Bulk Delete
+                            <button
+                                className="bg-[#c6252b] text-white rounded-lg flex items-center gap-2 px-4 py-2"
+                            >
+                                <MdOutlineDeleteForever className="text-white w-5 h-5" />
+                                Delete
+                            </button>
+                            <button
+                                className="bg-[#c6252b] text-white rounded-lg flex items-center gap-2 px-4 py-2"
+                            >   
+                                <IoPieChart className="text-white w-5 h-5" />
+                                Analysis
                             </button>
                         </div>
                     </div>
@@ -165,9 +205,11 @@ const ExpenseTable = () => {
                         <tbody>
                             {expenses.map((expense, index) => (
                                 <tr
-                                    key={index}
-                                    className="bg-white border-b hover:bg-gray-50"
-                                >
+                                key={index}
+                                className={`bg-white border-b  ${
+                                    expense.transaction_type === 'credit' ? 'bg-green-100 hover:bg-green-200' : 'bg-red-100 hover:bg-red-200'
+                                }`}
+                            >
                                     <td className="w-4 p-4">
                                         <div className="flex items-center">
                                             <input
@@ -198,7 +240,7 @@ const ExpenseTable = () => {
                                         {expense.id}
                                     </th>
                                     <td className="px-6 py-4  text-gray-900">
-                                        {expense.transaction_date}
+                                        {formatDate(expense.transaction_date)}
                                     </td>
                                     <td className="px-6 py-4  text-gray-900">
                                         {expense.transaction_type}
@@ -210,7 +252,7 @@ const ExpenseTable = () => {
                                         INR
                                     </td>
                                     <td className="px-6 py-4  text-gray-900">
-                                        {expense.user}
+                                        {expense.payer_name}
                                     </td>
                                     <td className="px-6 py-4  text-gray-900">
                                         {expense.debit_category}
@@ -222,7 +264,7 @@ const ExpenseTable = () => {
                                     <td className="px-6 py-4">
                                         <Link
                                             to={expense.document_id}
-                                            className="p-2 rounded-lg bg-red-100"
+                                            className="p-2 rounded-lg bg-neutral-200"
                                         >
                                             View
                                         </Link>
@@ -240,22 +282,23 @@ const ExpenseTable = () => {
                                             }}
                                             className="text-blue-500 hover:text-blue-700"
                                         >
-                                            <MdOutlineModeEdit className="w-5 h-5" />
+                                            <MdOutlineModeEdit className="w-6 h-6" />
                                         </button>
                                         <button
                                             onClick={() => {
                                                 setEditDeleteExpenseId(
                                                     expense.id
                                                 );
-                                                handleDeleteExpense();
+                                                showDeleteModal();
+
                                             }}
                                             className="text-red-500 hover:text-red-700"
                                         >
-                                            <MdOutlineDeleteForever className="w-5 h-5" />
+                                            <MdOutlineDeleteForever className="w-6 h-6" />
                                         </button>
-                                        <button className="text-gray-500 hover:text-gray-700">
+                                        {/* <button className="text-gray-500 hover:text-gray-700">
                                             <BsThreeDotsVertical className="w-5 h-5" />
-                                        </button>
+                                        </button> */}
                                     </td>
                                 </tr>
                             ))}
@@ -275,7 +318,29 @@ const ExpenseTable = () => {
                     isopen={openEditExpenseSidebar}
                     toggleSidebar={toggleEditSidebar}
                 />
-            )}{" "}
+            )}
+            {deleteModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white rounded-lg shadow-lg p-6">
+                        <h2 className="text-lg font-semibold mb-4">Confirm Delete</h2>
+                        <p className="mb-4">Are you sure you want to delete this entry?</p>
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={showDeleteModal}
+                                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteExpense}
+                                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
