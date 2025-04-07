@@ -4,4 +4,4 @@ from expense_manager.models import *
 
 # Register your models here.
 
-# admin.register(Expense)
+admin.register(Expense)
