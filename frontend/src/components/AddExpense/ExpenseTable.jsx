@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MdOutlineModeEdit, MdOutlineDeleteForever } from "react-icons/md";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import AddExpenseSidebar from "./AddExpenseSidebar";
 import { useSelector } from "react-redux";
 import {
@@ -19,6 +18,7 @@ import { IoPieChart } from "react-icons/io5";
 
 
 const ExpenseTable = () => {
+
     const { access_token } = useSelector((state) => state.auth);
 
     const [openNewExpenseSidebar, setopenNewExpenseSidebar] = useState(false);
@@ -74,12 +74,12 @@ const ExpenseTable = () => {
     const handleDeleteExpense = async () => {
         try {
             console.log(editDeleteExpenseId)
-            res = await deleteExpense({
+            const res = await deleteExpense({
                 id: editDeleteExpenseId,
                 access_token: access_token,
             }).unwrap();
 
-            console.log("Deleted successfully", res);
+            showDeleteModal()
         } catch (error) {
             console.error("Failed to delete:", error);
         }
@@ -100,7 +100,7 @@ const ExpenseTable = () => {
     return (
         <div className="w-full min-h-screen">
             <div className="flex flex-col mx-10">
-                <h1 className="text-3xl p-5 font-medium">Expense Records</h1>
+                <h1 className="text-3xl p-5 font-medium">Transaction Log</h1>
 
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <div className="flex flex-row gap-x-4 items-center justify-between pb-4">
@@ -133,12 +133,7 @@ const ExpenseTable = () => {
                                 <MdOutlineDeleteForever className="text-white w-5 h-5" />
                                 Delete
                             </button>
-                            <button
-                                className="bg-[#c6252b] text-white rounded-lg flex items-center gap-2 px-4 py-2"
-                            >   
-                                <IoPieChart className="text-white w-5 h-5" />
-                                Analysis
-                            </button>
+                         
                         </div>
                     </div>
 
@@ -166,7 +161,7 @@ const ExpenseTable = () => {
                                     </div>
                                 </th>
                                 <th scope="col" className="px-6 py-3">
-                                    Expense ID
+                                    ID
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     Datetime

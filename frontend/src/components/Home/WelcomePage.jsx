@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LuCircleFadingPlus } from 'react-icons/lu';
 import { BsGraphUpArrow } from 'react-icons/bs';
 import { MdOutlineDocumentScanner, MdOutlineEditLocation, MdSettingsInputAntenna } from 'react-icons/md';
@@ -11,10 +11,10 @@ import { GrPieChart } from 'react-icons/gr';
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../../features/userSlice";
 import { useGetLoggedUserQuery } from "../../services/userAuthApi";
-import { getToken } from "../../services/LocalStorage";
+import { getToken,removeToken } from "../../services/LocalStorage";
 
 const buttons = [
-    { to: '/add-expense', icon: LuCircleFadingPlus, label: 'Add Expense' },
+    { to: '/add-expense', icon: LuCircleFadingPlus, label: 'Add Transactions' },
     { to: '/dashboard', icon: GrPieChart, label: 'Dashboard' },
     { to: '/splitwise', icon: SiMoneygram, label: 'Splitwise' },
     { to: '/documents', icon: MdOutlineDocumentScanner, label: 'My Documents' },
@@ -35,19 +35,20 @@ const ButtonLink = ({ to, icon: Icon, label }) => (
 
 const WelcomePage = () => {
     const { access_token } = getToken();
+    const navigate = useNavigate();
 
-    console.log("welcom page")
 
     // const [data, { isSuccess }] = useGetLoggedUserQuery(access_token);
     const { data, isSuccess } = useGetLoggedUserQuery(access_token);
 
     const [name, setName] = useState("");
     const dispatch = useDispatch();
-    console.log("data", data, isSuccess)
+    // console.log("data", data, isSuccess)
 
     useEffect(() => {
         if (!data) {
             dispatch(setUserInfo({ id: "", name: "", email: "" }));
+            navigate("/")
             return;
         }
         if (isSuccess) {

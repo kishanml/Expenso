@@ -84,7 +84,7 @@ const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
                             <option value="Credit">Credit</option>
                         </select>
                     </div>
-
+                    {console.log(formData.transaction_type)}
                     <div className="flex flex-col">
                         <label className="text-lg font-medium">
                             Transaction Amount
@@ -138,11 +138,15 @@ const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
                         />
                     </div>
 
-                    {formData.type === "Credit" ? (
+                    {formData.transaction_type === "Credit" ? (
                         <div className="flex flex-col">
                             <label className="text-lg font-medium">
                                 Credit Category
                             </label>
+                            <p className="text-sm mb-2 text-gray-500">
+                                    Select the credit category.
+                                </p>
+                            
                             <select
                                 name="category"
                                 value={formData.debit_category}
@@ -151,16 +155,18 @@ const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
                             >
                                 <option value="Fixed">Fixed</option>
                                 <option value="Variable">Variable</option>
-                                <small className="text-sm mb-2 text-gray-500">
-                                    Select the credit category.
-                                </small>
+                                
                             </select>
+                            
                         </div>
                     ) : (
                         <div className="flex flex-col">
                             <label className="text-lg font-medium">
                                 Debit Category
                             </label>
+                            <p className="text-sm mb-2 text-gray-500">
+                                    Select the debit category.
+                                </p>
                             <select
                                 name="debit_category"
                                 value={formData.debit_category}
@@ -170,12 +176,11 @@ const AddExpenseSidebar = ({ isopen, toggleSidebar }) => {
                                 <option value="Bills">Bills</option>
                                 <option value="Wants">Wants</option>
                                 <option value="Needs">Needs</option>
-                                <small className="text-sm mb-2 text-gray-500">
-                                    Select the debit category.
-                                </small>
+                               
                             </select>
                         </div>
                     )}
+                    
 
                     <div className="flex flex-col">
                         <label className="text-lg font-medium">

@@ -5,9 +5,15 @@ import { FaAngleDown } from "react-icons/fa6";
 
 import logo from "/logo.png";
 import { useSelector } from 'react-redux';
+import { useGetLoggedUserQuery } from "../services/userAuthApi";
+import { getToken } from '../services/LocalStorage';
+
 
 const NavBar = ({ show }) => {
+  const { access_token } = getToken();
+
   const location = useLocation();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const userData = useSelector(state => state.user_info);
 
@@ -19,6 +25,8 @@ const NavBar = ({ show }) => {
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
   }, [setIsMenuOpen]);
+
+  const { data, isSuccess } = useGetLoggedUserQuery(access_token);
 
   return (
     <nav className="bg-white text-black p-4 mb-5 border-b-2 ">
@@ -43,12 +51,12 @@ const NavBar = ({ show }) => {
               <div className='flex flex-row items-center gap-x-2'>
                 <FaUser className="text-lg text-gray-600 h-4 w-4" />
                 <span className="font-semibold text-sm text-gray-700">
-                  {userData?.name ? userData.name : 'User'}
+                  {data?.name ? data.name : 'User'}
                 </span>
               <FaAngleDown/>
               </div>
                 <span className={`text-xs font-regular px-2 py-0.5 rounded-full `}>
-                  BASIC - EXPENSO
+                 {`${data?.is_admin ? "ADMIN" : "BASIC"}`} - EXPENSO
                 </span>
             </button>
 
