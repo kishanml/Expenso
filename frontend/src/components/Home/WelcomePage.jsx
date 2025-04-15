@@ -49,7 +49,7 @@ const WelcomePage = () => {
         if (!data) {
             dispatch(setUserInfo({ id: "", name: "", email: "" }));
             navigate("/")
-            return;
+            // return;
         }
         if (isSuccess) {
             setName(data.name);
@@ -61,7 +61,7 @@ const WelcomePage = () => {
                 })
             );
         }
-    }, [isSuccess, data, dispatch]);
+    }, [isSuccess, data]);
 
     {
         return (

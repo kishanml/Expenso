@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import LoginHeader from "./LoginHeader";
 
 import {
@@ -10,23 +10,22 @@ import {
     FaEnvelopeOpenText,
 } from "react-icons/fa";
 
-
 import { getToken, storeToken } from "../../services/LocalStorage";
 import { useDispatch } from "react-redux";
 import { setUserToken } from "../../features/authSlice";
-import {
-    useLoginUserMutation,
-} from "../../services/userAuthApi";
+import { useLoginUserMutation } from "../../services/userAuthApi";
 import { Link, useNavigate } from "react-router-dom";
 
-
 const Login = () => {
-
-    const [form, setform] = useState({ email: "", password: "", remember_me: false });
+    const [form, setform] = useState({
+        email: "",
+        password: "",
+        remember_me: false,
+    });
     const [hidePassword, sethidePassword] = useState(true);
 
     // const [openErrorModal, setopenErrorModal] = useState(false)
-    const [Error, setError] = useState("")
+    const [Error, setError] = useState("");
 
     // const closeErrorModal = () => {
     //     setopenErrorModal(false);
@@ -36,7 +35,7 @@ const Login = () => {
         if (Error) {
             // setform({ email: "", password: "", remember_me: false });
         }
-    }, [Error]); 
+    }, [Error]);
     const HandleErrorMsg = () => {
         return (
             <div className="bg-red-500 text-white p-2 rounded-lg text-center mb-4">
@@ -65,21 +64,20 @@ const Login = () => {
         console.log(response);
 
         if (response.error) {
-
-            console.log('here', response.error.data.errors.non_field_errors[0])
-            setError(response.error.data.errors.non_field_errors[0])
+            console.log("here", response.error.data.errors.non_field_errors[0]);
+            setError(response.error.data.errors.non_field_errors[0]);
         }
 
         if (response.data) {
             storeToken(response.data.token);
-            let { access_token } = getToken(); 
+            let { access_token } = getToken();
 
             dispatch(setUserToken({ access_token: access_token }));
-            console.log('here_already')
+            console.log("here_already");
             setTimeout(() => {
-                navigate("/welcome", {replace :true });
+                navigate("/welcome", { replace: true });
             }, 3000);
-            console.log('done')
+            console.log("done");
         }
     };
 
@@ -92,7 +90,10 @@ const Login = () => {
             <div className="flex flex-col gap-y-6 w-full max-w-md">
                 {/* Logo and Title */}
                 <LoginHeader />
-                <form className="flex flex-col gap-y-6" onSubmit={handleLoginSubmit}>
+                <form
+                    className="flex flex-col gap-y-6"
+                    onSubmit={handleLoginSubmit}
+                >
                     {/* Email Input */}
 
                     {Error && HandleErrorMsg()}
@@ -105,7 +106,9 @@ const Login = () => {
                             className="outline-none bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
                             placeholder="Enter your email"
                             value={form.email}
-                            onChange={(e) => setform({ ...form, email: e.target.value })}
+                            onChange={(e) =>
+                                setform({ ...form, email: e.target.value })
+                            }
                             required
                         />
                     </div>
@@ -119,7 +122,9 @@ const Login = () => {
                             className="outline-none bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
                             placeholder="Enter your password"
                             value={form.password}
-                            onChange={(e) => setform({ ...form, password: e.target.value })}
+                            onChange={(e) =>
+                                setform({ ...form, password: e.target.value })
+                            }
                             required
                             minLength="6"
                         />
@@ -143,25 +148,31 @@ const Login = () => {
                                 type="checkbox"
                                 className="rounded h-5 w-5"
                                 checked={form.remember_me}
-                                onChange={(e) => setform({ ...form, remember_me: e.target.checked })}
+                                onChange={(e) =>
+                                    setform({
+                                        ...form,
+                                        remember_me: e.target.checked,
+                                    })
+                                }
                             />
                             Remember Me
                         </label>
-                        <Link to="/reset-password">
-                            <button
-                                className="text-[#c6252b] cursor-pointer hover:underline">
-                                Forgot Password?
-                            </button>
+                        <Link
+                            to="/reset-password"
+                            className="text-[#c6252b] cursor-pointer hover:underline"
+                        >
+                            Forgot Password?
                         </Link>
                     </div>
 
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className={`${isButtonDisabled
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-red-700 hover:bg-red-600"
-                            } text-white text-lg font-semibold rounded-lg p-2.5 w-full transition duration-200`}
+                        className={`${
+                            isButtonDisabled
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-red-700 hover:bg-red-600"
+                        } text-white text-lg font-semibold rounded-lg p-2.5 w-full transition duration-200`}
                         disabled={isButtonDisabled}
                     >
                         Login
@@ -172,16 +183,13 @@ const Login = () => {
                         Not an Expenso user?{" "}
                         <span className="ml-2 ">
                             <Link to="/create-account">
-
-                                <button
-                                    className="text-[#c6252b] cursor-pointer hover:underline" >
+                                <button className="text-[#c6252b] cursor-pointer hover:underline">
                                     Create an account
                                 </button>
                             </Link>
                         </span>
                     </h1>
                 </form>
-               
             </div>
         </>
     );

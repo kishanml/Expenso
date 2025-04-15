@@ -42,7 +42,10 @@ export default function App() {
   useEffect(() => {
     let { access_token } = getToken();
     if (access_token)
+    {
       dispatch(setUserToken({ access_token: access_token }));
+      setIsAuthenticated(true)
+    }
   }, [])
 
   console.log(isAuthenticated)
