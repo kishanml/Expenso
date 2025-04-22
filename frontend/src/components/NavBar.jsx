@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { FaAngleDown } from "react-icons/fa6";
@@ -7,14 +7,14 @@ import logo from "/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetLoggedUserQuery } from "../services/userAuthApi";
 import { getToken, removeToken } from "../services/LocalStorage";
-import {  unSetUserToken } from "../features/authSlice";
+import { unSetUserToken } from "../features/authSlice";
 
 const NavBar = ({ show }) => {
     const { access_token } = getToken();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
     const location = useLocation();
+    const dropdownRef = useRef(null);
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const userData = useSelector((state) => state.user_info);
@@ -31,6 +31,19 @@ const NavBar = ({ show }) => {
     const toggleMenu = useCallback(() => {
         setIsMenuOpen((prev) => !prev);
     }, [setIsMenuOpen]);
+
+    const handleClickOutside = useCallback((event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsMenuOpen(false);
+        }
+    }, [dropdownRef, setIsMenuOpen]);
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [handleClickOutside]);
 
     const { data, isSuccess } = useGetLoggedUserQuery(access_token);
 
@@ -72,7 +85,7 @@ const NavBar = ({ show }) => {
                 </div>
 
                 {show && (
-                    <div className="relative">
+                    <div className="relative" ref={dropdownRef}>
                         <button
                             onClick={toggleMenu}
                             className="flex flex-col items-center px-4 py-2 gap-y-1 bg-gray-200 hover:bg-gray-300 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 rounded-md"
@@ -96,7 +109,7 @@ const NavBar = ({ show }) => {
                             <div className="absolute right-0 mt-2 w-48 bg-white shadow-md rounded-md overflow-hidden z-10">
                                 <Link
                                     to="/edit-profile"
-                                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition duration-150 ease-in-out"
+                                    className="block px-4 w-full text-start py-2  text-gray-800 hover:bg-gray-100 transition duration-150 ease-in-out"
                                 >
                                     Edit Profile
                                 </Link>
@@ -110,7 +123,7 @@ const NavBar = ({ show }) => {
                                         );
                                         navigate("/");
                                     }}
-                                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition duration-150 ease-in-out"
+                                    className="block px-4 w-full text-start py-2  text-gray-800 hover:bg-gray-100 transition duration-150 ease-in-out"
                                 >
                                     Sign Out
                                 </button>
