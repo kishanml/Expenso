@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
 import uuid 
 
 class AbstractBaseModel(models.Model):
@@ -51,7 +52,7 @@ class UserManager(BaseUserManager):
 
 #  Custom User Model
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         verbose_name='Email',
         max_length=255,

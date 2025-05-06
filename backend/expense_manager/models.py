@@ -23,7 +23,7 @@ class Expense(models.Model):
         db_table = 'expense'
 
     def __str__(self) -> str:
-        return self.id + " - "+ self.payer_name + "(" + str(self.transaction_type) + ") - " + str(self.transaction_date)
+        return str(self.id) + " - "+ self.payer_name + "(" + str(self.transaction_type) + ") - " + str(self.transaction_date)
 
     
 
