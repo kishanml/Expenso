@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { MdOutlineModeEdit, MdOutlineDeleteForever } from "react-icons/md";
 import AddExpenseSidebar from "./AddExpenseSidebar";
 import { useSelector } from "react-redux";
+import { useUploadExpenseWithFileMutation } from "../../services/expenseApi";
+
+
 import {
     // useGetAllExpenseQuery,
     useLazyGetAllExpenseQuery,
@@ -12,7 +15,10 @@ import EditExpenseSidebar from "./EditExpenseSidebar";
 import { format } from 'date-fns';
 import { IoMdAdd } from "react-icons/io";
 import { CiImport } from "react-icons/ci";
-import { IoPieChart } from "react-icons/io5";
+import { RiFileExcel2Line } from "react-icons/ri";
+import { FaFilePdf } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
+
 
 
 
@@ -28,11 +34,46 @@ const ExpenseTable = () => {
     const [selectedExpenses, setSelectedExpenses] = useState([]);
 
 
+    const [importModal, setImportModal] = useState(false);
+
+
     const [deleteModal, setDeleteModal] = useState(false);
     const [editDeleteExpenseId, setEditDeleteExpenseId] = useState(null);
 
     const [trigger, { data, isSuccess }] = useLazyGetAllExpenseQuery({ access_token });
     const [deleteExpense, { isLoading, isDeleteSuccess, isError }] = useDeleteExpenseMutation();
+
+
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadExpenseWithFile] = useUploadExpenseWithFileMutation();
+
+    const handleExcelUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setSelectedFile(file);
+        };
+
+        const handleImport = async () => {
+        if (!selectedFile) return;
+
+        setIsUploading(true);
+        try {
+            const access_token = localStorage.getItem("access_token");
+            const response = await uploadExpenseWithFile({ file: selectedFile, access_token }).unwrap();
+
+            if (response.error) {
+            alert("Error uploading file");
+            } else {
+            setImportModal(false);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        } finally {
+            setIsUploading(false);
+        }
+        };
+
 
     const handleSelectAll = (event) => {
         const isSelected = event.target.checked;
@@ -52,6 +93,11 @@ const ExpenseTable = () => {
     const toggleSidebar = () => {
         setopenNewExpenseSidebar(!openNewExpenseSidebar);
     };
+
+    const showImportModal = () => {
+        setImportModal(!importModal)
+    }
+
     const toggleEditSidebar = () => {
         setopenEditExpenseSidebar(!openEditExpenseSidebar);
     };
@@ -116,7 +162,7 @@ const ExpenseTable = () => {
                         <div className="flex gap-x-2">
                             <button
                                 className="bg-[#c6252b] text-white rounded-lg flex items-center gap-2 px-4 py-2"
-                            >
+                                onClick={showImportModal}>
                                 <CiImport className="text-white w-5 h-5" />
                                 Import
                             </button>
@@ -133,7 +179,7 @@ const ExpenseTable = () => {
                                 <MdOutlineDeleteForever className="text-white w-5 h-5" />
                                 Delete
                             </button>
-                         
+
                         </div>
                     </div>
 
@@ -200,11 +246,10 @@ const ExpenseTable = () => {
                         <tbody>
                             {expenses.map((expense, index) => (
                                 <tr
-                                key={index}
-                                className={`bg-white border-b  ${
-                                    expense.transaction_type === 'credit' ? 'bg-green-100 hover:bg-green-200' : 'bg-red-100 hover:bg-red-200'
-                                }`}
-                            >
+                                    key={index}
+                                    className={`bg-white border-b  ${expense.transaction_type === 'credit' ? 'bg-green-100 hover:bg-green-200' : 'bg-red-100 hover:bg-red-200'
+                                        }`}
+                                >
                                     <td className="w-4 p-4">
                                         <div className="flex items-center">
                                             <input
@@ -336,6 +381,57 @@ const ExpenseTable = () => {
                     </div>
                 </div>
             )}
+
+
+            {importModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white rounded-lg shadow-xl p-6 w-80 relative">
+                  <button
+                    className="absolute top-2 left-2 text-gray-500 hover:text-gray-700"
+                    onClick={() => setImportModal(false)}
+                    disabled={isUploading}
+                  >
+                    <IoClose size={20} />
+                  </button>
+          
+                  <h2 className="text-xl font-semibold mb-4 text-center">Import Expenses</h2>
+                  <p className="text-sm text-gray-600 mb-6 text-center">
+                    Upload an Excel (.xlsx) file with your expense records.
+                  </p>
+          
+                  <div className="flex flex-col items-center mb-4">
+                    <button
+                      className="flex items-center space-x-2 bg-green-600 text-white px-5 py-1.5 rounded hover:bg-green-700"
+                      onClick={() => document.getElementById("excel-upload").click()}
+                      disabled={isUploading}
+                    >
+                      <RiFileExcel2Line size={18} />
+                      <span>
+                        {selectedFile ? selectedFile.name : isUploading ? "Uploading..." : "Upload Excel"}
+                      </span>
+                    </button>
+                    <input
+                      id="excel-upload"
+                      type="file"
+                      accept=".xlsx"
+                      className="hidden"
+                      onChange={handleExcelUpload}
+                    />
+                  </div>
+          
+                  <div className="flex justify-center mt-4">
+                    <button
+                      className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                      onClick={handleImport}
+                      disabled={!selectedFile || isUploading}
+                    >
+                      Import
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
         </div>
     );
 };

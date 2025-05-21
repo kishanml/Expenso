@@ -1,32 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useGetAllExpenseQuery } from '../../services/expenseApi';
-import { useSelector } from 'react-redux';
-import { FaBars, FaTimes } from 'react-icons/fa'; // Import icons for the sidebar toggle
+
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import Overview from "./Overview"
+
 
 const Dashboard = () => {
-    const { access_token } = useSelector((state) => state.auth);
-    const [expenses, setExpenses] = useState([]);
-    const [filter, setFilter] = useState('Weekly'); // Default filter value
+    const [filter, setFilter] = useState('Weekly');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [navbarHeight, setNavbarHeight] = useState(0); // Initialize to 0, will be dynamically set
+    const [navbarHeight, setNavbarHeight] = useState(0);
+    const [activeTopic, setActiveTopic] = useState('Overview'); 
+    const [arrowIcon, setArrowIcon] = useState(<MdOutlineKeyboardArrowRight className="h-10 w-10" />); 
 
-    const { data, isSuccess, isError, isLoading } = useGetAllExpenseQuery({ access_token, filter });
-    console.log("Expenses:", expenses, "Data:", data, "isSuccess:", isSuccess, "isError:", isError, "isLoading:", isLoading);
 
     useEffect(() => {
-        if (data && isSuccess && !data.error) {
-            setExpenses(data.data);
-        } else if (data && isSuccess && data.error) {
-            console.error("Error fetching expenses:", data.message);
-        } else if (isError) {
-            console.error("Error fetching expenses:", isError);
-        }
-
-        const nav = document.querySelector('nav'); 
+        const nav = document.querySelector('nav');
         if (nav) {
             setNavbarHeight(nav.offsetHeight);
         }
-    }, [data, isSuccess, isError]);
+    }, []);
 
     const handleFilterChange = (event) => {
         setFilter(event.target.value);
@@ -34,6 +26,14 @@ const Dashboard = () => {
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
+        setArrowIcon(isSidebarOpen ? <MdOutlineKeyboardArrowRight className="h-10 w-10" /> : <MdOutlineKeyboardArrowLeft className="h-10 w-10" />);
+
+    };
+
+    const handleTopicClick = (topic) => {
+        setActiveTopic(topic);
+        // Optionally close the sidebar after selecting a topic
+        // setIsSidebarOpen(false);
     };
 
     return (
@@ -44,35 +44,46 @@ const Dashboard = () => {
                     isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
-                {/* <div className="sidebar-header flex justify-end items-center mb-4">
-                    <button onClick={toggleSidebar} className="text-gray-600 focus:outline-none">
-                        <FaTimes className="h-5 w-5" />
-                    </button>
-                </div> */}
                 <div className="sidebar-content">
                     <h3 className="text-lg font-semibold text-gray-700 mb-4">Charts</h3>
                     <ul>
-                        <li className="py-2 text-gray-600 cursor-pointer hover:text-gray-800">Overview</li>
-                        <li className="py-2 text-gray-600 cursor-pointer hover:text-gray-800">Credit Breakdown</li>
-                        <li className="py-2 text-gray-600 cursor-pointer hover:text-gray-800">Debit Breakdown</li>
-                        <li className="py-2 text-gray-600 cursor-pointer hover:text-gray-800">Create Custom Chart</li>
-
-
-                        {/* Add more filter options here */}
-                    </ul>
-
+    <li
+        className={`py-2 pl-4 text-gray-600 cursor-pointer hover:bg-gray-300 hover:rounded-lg ${activeTopic === 'Overview' ? 'font-bold bg-gray-300' : ''}`}
+        onClick={() => handleTopicClick('Overview')}
+    >
+        Overview
+    </li>
+    <li
+        className={`py-2 pl-4 text-gray-600 cursor-pointer hover:bg-gray-300 hover:rounded-lg ${activeTopic === 'Credit Breakdown' ? 'font-bold bg-gray-300' : ''}`}
+        onClick={() => handleTopicClick('Credit Breakdown')}
+    >
+        Credit Breakdown
+    </li>
+    <li
+        className={`py-2 pl-4 text-gray-600 cursor-pointer hover:bg-gray-300 hover:rounded-lg ${activeTopic === 'Debit Breakdown' ? 'font-bold bg-gray-300' : ''}`}
+        onClick={() => handleTopicClick('Debit Breakdown')}
+    >
+        Debit Breakdown
+    </li>
+    <li
+        className={`py-2 pl-4 text-gray-600 cursor-pointer hover:bg-gray-300 hover:rounded-lg ${activeTopic === 'Custom Chart' ? 'font-bold bg-gray-300' : ''}`}
+        onClick={() => handleTopicClick('Custom Chart')}
+    >
+        Custom Chart
+    </li>
+</ul>
                 </div>
             </aside>
 
             {/* Main Content */}
             <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${
                 isSidebarOpen ? 'ml-64' : 'ml-0'
-            }`}> 
-                <div id='title' className='bg-white p-4 shadow-md flex items-center justify-between'>
-                    <button onClick={toggleSidebar} className="text-gray-600 mr-4 focus:outline-none">
-                        <FaBars className="h-6 w-6" />
+            }`}>
+               <div id='title' className='bg-white p-4 shadow-md flex items-center justify-between'>
+                    <button onClick={toggleSidebar} className="text-gray-600 mr-4 focus:outline-none flex items-center">
+                        {arrowIcon}
                     </button>
-                    <h1 className='text-xl font-semibold text-gray-800'>Overview</h1>
+                    <h1 className='text-xl font-semibold text-gray-800'>{activeTopic}</h1> 
                     <select
                         name="time_range"
                         value={filter}
@@ -82,13 +93,17 @@ const Dashboard = () => {
                         <option value="Weekly">Weekly</option>
                         <option value="Monthly">Monthly</option>
                         <option value="Yearly">Yearly</option>
-                        {/* Add more time range options if your backend supports them */}
                     </select>
                 </div>
 
                 {/* Content Area */}
                 <main className="flex-1 bg-gray-100 p-6 overflow-y-auto">
-                  charts
+                  {activeTopic === 'Overview' && (
+                        <Overview  />
+                    )}
+                  {activeTopic === 'Credit Breakdown' && <div>Credit Breakdown Charts Go Here</div>}
+                  {activeTopic === 'Debit Breakdown' && <div>Debit Breakdown Charts Go Here</div>}
+                  {activeTopic === 'Custom Chart' && <div>Custom Chart Builder Go Here</div>}
                 </main>
             </div>
         </div>

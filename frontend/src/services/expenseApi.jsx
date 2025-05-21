@@ -21,6 +21,21 @@ export const expenseApi = createApi({
                 };
             },
         }),
+        uploadExpenseWithFile: builder.mutation({
+            query: ({ file, access_token }) => {
+              const formData = new FormData();
+              formData.append("file", file);
+      
+              return {
+                url: "",
+                method: "POST",
+                body: formData,
+                headers: {
+                  Authorization: `Bearer ${access_token}`,
+                },
+              };
+            },
+          }),
         getAllExpense: builder.query({
             query: ({ access_token }) => {
                 return {
@@ -71,11 +86,14 @@ export const expenseApi = createApi({
                 };
             },
         }),
+
+
     }),
 });
 
 export const {
     useAddExpenseMutation,
+    useUploadExpenseWithFileMutation,
     useLazyGetAllExpenseQuery,
     useGetAllExpenseQuery,
     useGetExpenseByIdQuery,
