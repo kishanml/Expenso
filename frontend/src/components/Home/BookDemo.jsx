@@ -1,23 +1,21 @@
 import React, { useState, useCallback } from 'react';
 import hero from "../../../public/demo.png";
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 const BookDemo = () => {
     const userData = useSelector(state => state.user_info);
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate(); 
     const [inputform, setInputform] = useState({
         name: userData.name || "",
         phone: "",
         email: userData.email || "",
     });
-    // Derived state
     const isDisabled = !inputform.name || !inputform.phone || !inputform.email;
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // More concise input change handler using useCallback for potential memoization
     const handleInputChange = useCallback((e) => {
         const { name, value } = e.target;
         setInputform(prevInputform => ({ ...prevInputform, [name]: value }));
@@ -27,47 +25,7 @@ const BookDemo = () => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        try {
-            const response = await fetch("http://0.0.0.0:5000/api/addUser", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(inputform),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            if (result['status'] === 200) {
-                setSuccess("Successfully booked your demo session! An agent will contact you soon.");
-                setError("");
-                setTimeout(() => {
-                    navigate('/welcome'); // Use navigate here
-                }, 4000);
-            } else {
-                setError("Some error occurred. Please try again.");
-                setSuccess("");
-            }
-
-        } catch (error) {
-            console.error("Error submitting form data:", error);
-            setError("An unexpected error occurred. Please try again.");
-            setSuccess("");
-        } finally {
-            setIsSubmitting(false);
-            setTimeout(() => {
-                setInputform(prevInputform => ({
-                    name: userData.name || "",
-                    phone: "",
-                    email: userData.email || "",
-                }));
-                setSuccess("");
-                setError("");
-            }, 5000);
-        }
+       
     };
 
     return (

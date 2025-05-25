@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { LuCircleFadingPlus } from 'react-icons/lu';
-import { BsGraphUpArrow } from 'react-icons/bs';
 import { MdOutlineDocumentScanner, MdOutlineEditLocation, MdSettingsInputAntenna } from 'react-icons/md';
 import { SiMoneygram } from 'react-icons/si';
-import { TbReportMoney } from 'react-icons/tb';
-import { GoCommentDiscussion } from 'react-icons/go';
 import { GrPieChart } from 'react-icons/gr';
 
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../../features/userSlice";
 import { useGetLoggedUserQuery } from "../../services/userAuthApi";
-import { getToken,removeToken } from "../../services/LocalStorage";
+import { getToken } from "../../services/LocalStorage";
 
 const buttons = [
     { to: '/add-expense', icon: LuCircleFadingPlus, label: 'Add Transactions' },
     { to: '/dashboard', icon: GrPieChart, label: 'Dashboard' },
     { to: '/splitwise', icon: SiMoneygram, label: 'Splitwise' },
-    { to: '/documents', icon: MdOutlineDocumentScanner, label: 'My Documents' },
+    { to: '/my-documents', icon: MdOutlineDocumentScanner, label: 'My Documents' },
     // { to: '/income-tax', icon: TbReportMoney, label: 'Income Tax' },
     // { to: '/locked-price', icon: MdOutlineEditLocation, label: 'Locked Price' },
     // { to: '/investments', icon: BsGraphUpArrow, label: 'Investments' },

@@ -17,6 +17,8 @@ import Layout from "./components/Layout";
 import BookDemo from "./components/Home/BookDemo";
 import Contact from "./components/Home/Contact";
 import Dashboard from "./components/Dashboard/Dashboard";
+import Splitwise from "./components/Splitwise/Splitwise";
+import Documents from "./components/myDocuments/Documents";
 
 export default function App() {
 
@@ -41,8 +43,7 @@ export default function App() {
 
   useEffect(() => {
     let { access_token } = getToken();
-    if (access_token)
-    {
+    if (access_token) {
       dispatch(setUserToken({ access_token: access_token }));
       setIsAuthenticated(true)
     }
@@ -113,7 +114,7 @@ export default function App() {
 
         />
 
-<Route
+        <Route
           path="dashboard"
           element={isAuthenticated ? (
             <Layout>
@@ -122,7 +123,32 @@ export default function App() {
           ) : <Navigate to="/" />}
 
         />
+
+
+        <Route
+          path="splitwise"
+          element={isAuthenticated ? (
+            <Layout>
+              <Splitwise />
+            </Layout>
+          ) : <Navigate to="/" />}
+
+        />
+
+
+        <Route
+          path="my-documents"
+          element={isAuthenticated ? (
+            <Layout>
+              <Documents />
+            </Layout>
+          ) : <Navigate to="/" />}
+
+        />
       </Routes>
+
+
+
     </BrowserRouter>
   );
 }

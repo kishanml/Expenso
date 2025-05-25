@@ -6,19 +6,16 @@ export const dashboardApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${BASE_URL}dashboard/`,
     }),
-
     endpoints: (builder) => ({
         getDashboardData: builder.query({
-            query: ({ access_token, type = "weekly", path = "overview" }) => {
-                return {
-                    url: `${path}/?type=${type}`, 
-                    method: "GET",
-                    headers: {
-                        "Content-type": "application/json",
-                        authorization: `Bearer ${access_token}`,
-                    },
-                };
-            },
+            query: ({ access_token, type = "weekly", path = "overview" }) => ({
+                url: `${path}/?type=${type}`,
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${access_token}`,
+                },
+            }),
         }),
     }),
 });

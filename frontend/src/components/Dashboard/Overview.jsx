@@ -3,6 +3,8 @@ import { useLazyGetDashboardDataQuery } from '../../services/dashboardApi';
 import { useSelector } from 'react-redux';
 import Card from "../Charts/Card"
 
+import GitHubContributionGrid from './GitHubContributionGrid';
+
 const Overview = () => {
     const { access_token } = useSelector((state) => state.auth);
 
@@ -57,13 +59,23 @@ const Overview = () => {
         return <div className="text-center text-gray-500 mt-8">Loading overview...</div>;
     }
 
-    return (
-        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card title="Weekly Spend" data={spending.weekly} />
-            <Card title="Monthly Spend" data={spending.monthly} />
-            <Card title="Yearly Spend" data={spending.yearly} />
-        </div>
-    );
+   return (
+  <>
+    <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <Card title="Weekly Spend" data={spending.weekly} />
+      <Card title="Monthly Spend" data={spending.monthly} />
+      <Card title="Yearly Spend" data={spending.yearly} />
+    </div>
+
+    <div className="mt-10 flex justify-center">
+      <div>
+        <h2 className="text-lg font-semibold mb-4 text-center">Financial Activity</h2>
+        <GitHubContributionGrid />
+      </div>
+    </div>
+  </>
+);
+
 };
 
 

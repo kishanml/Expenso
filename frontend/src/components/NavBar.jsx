@@ -48,7 +48,7 @@ const NavBar = ({ show }) => {
     const { data, isSuccess } = useGetLoggedUserQuery(access_token);
 
     return (
-        <nav className="bg-white text-black p-4 mb-5 border-b-2 ">
+        <nav className="bg-white text-black p-4 mb-5 border-b-2 sticky top-0 z-50">
             <div className="flex justify-between items-center">
                 <Link to="/" className="flex items-center">
                     <img src={logo} alt="Logo" width={60} />
@@ -57,7 +57,7 @@ const NavBar = ({ show }) => {
                     </h1>
                 </Link>
 
-                <div className="flex flex-grow justify-center space-x-4">
+                <div className="flex flex-grow justify-center space-x-6">
                     <Link
                         to="/welcome"
                         className={`mx-2 ${isActive(
@@ -74,13 +74,14 @@ const NavBar = ({ show }) => {
                     >
                         Contact
                     </Link>
+                   
                     <Link
                         to="/book-demo"
                         className={`mx-2 ${isActive(
                             "/book-demo"
                         )} font-medium text-xl transition duration-150 ease-in-out hover:text-[#a61e23]`}
                     >
-                        Demo
+                        Book Demo
                     </Link>
                 </div>
 

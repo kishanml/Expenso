@@ -45,7 +45,6 @@ class ExpenseManageSearch():
 
         return {"error": False, "msg": "", "data": data}
               
-        
             
 class ExpenseManagerView(APIView):
     permission_classes = [IsAuthenticated]
@@ -271,7 +270,6 @@ class ExpenseManagerView(APIView):
             return Response({"error": True, "msg": f"expense with id '{expense_id}' not found", "data": None}, status= status.HTTP_404_NOT_FOUND)
         
 
-    
 class DashBoardOverview(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -288,7 +286,7 @@ class DashBoardOverview(APIView):
 
         current_start, current_end, previous_start, previous_end = self.get_date_ranges(summary_type, today)
 
-        print(summary_type,current_start,current_end)
+        # print(summary_type,current_start,current_end)
 
         current_expenses = self.get_expenses(user, current_start, current_end)
         previous_expenses = self.get_expenses(user, previous_start, previous_end)
@@ -297,7 +295,7 @@ class DashBoardOverview(APIView):
         current_expenses_total_amount = sum(float(expense['transaction_amount']) for expense in current_expenses if expense['transaction_type']=="debit")
         previous_expenses_total_amount = sum(float(expense['transaction_amount']) for expense in previous_expenses if expense['transaction_type']=="debit")
 
-        print(current_expenses_total_amount,previous_expenses_total_amount)
+        # print(current_expenses_total_amount,previous_expenses_total_amount)
 
 
         return Response({
@@ -329,6 +327,64 @@ class DashBoardOverview(APIView):
             previous_end = current_start - timedelta(days=1)
 
         return current_start, today, previous_start, previous_end
+
+
+    def get_expenses(self, user, start_date, end_date):
+        start_datetime = datetime.combine(start_date, time.min)  
+        end_datetime = datetime.combine(end_date, time.max)      
+
+        expenses = Expense.objects.filter(
+            user=user,
+            transaction_date__range=(start_datetime, end_datetime)
+        )
+        return ExpenseSerializer(expenses, many=True).data
+    
+
+
+class DashBoardDebitBreakdown(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        summary_type = request.query_params.get("type", "weekly").lower()
+        valid_types = ["weekly", "monthly", "yearly"]
+        
+        if summary_type not in valid_types:
+            return Response({"error": True, "msg": "Invalid summary type", "data": None})
+
+        user = request.user
+        today = timezone.now().date()
+
+        current_start, current_end = self.get_date_ranges(summary_type, today)
+
+        # print(summary_type,current_start,current_end)
+
+        current_expenses = self.get_expenses(user, current_start, current_end)
+        
+        debit_cat = {}
+        for cat in DEBIT_CATEGORY_CHOICES:
+            debit_cat[cat[0]] = [ expense for expense in current_expenses if expense['debit_category']==cat[0] and expense['transaction_type']=='debit']
+        
+        print(debit_cat)
+        
+        return Response({
+            "error": False,
+            "msg": "",
+            "data": {"type":summary_type,**debit_cat}
+        })
+
+    def get_date_ranges(self, summary_type, today):
+        if summary_type == "weekly":
+            current_start = today - timedelta(days=today.weekday())  
+
+        elif summary_type == "monthly":
+            current_start = today.replace(day=1)
+            
+        elif summary_type == "yearly":
+            current_start = today.replace(month=1, day=1)
+
+
+        return current_start, today, 
 
 
     def get_expenses(self, user, start_date, end_date):
