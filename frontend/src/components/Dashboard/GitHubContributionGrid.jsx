@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { format, subDays } from "date-fns";
 
-const getRandomCount = () => Math.floor(Math.random() * 5);
+const getRandomCount = () => Math.floor(Math.random() * 50);
 
 const GitHubContributionGrid = ({ daysToShow = 365 }) => {
   const today = new Date();
@@ -11,21 +11,20 @@ const GitHubContributionGrid = ({ daysToShow = 365 }) => {
     const date = subDays(today, daysToShow - 1 - i);
     data.push({
       date,
-      count: getRandomCount(),
+      count: getRandomCount()*100,
     });
   }
 
   const rows = 7;
   const cols = Math.ceil(daysToShow / rows);
 
-  const getColor = (count) => {
-    if (count === 0) return "bg-red-100";
-    if (count === 1) return "bg-red-200";
-    if (count === 2) return "bg-red-300";
-    if (count === 3) return "bg-red-500";
-    return "bg-red-700";
-  };
-
+const getColor = (count) => {
+  if (count < 100) return "bg-red-100";
+  if (count >= 100 && count < 500) return "bg-red-200";
+  if (count >= 500 && count < 1000) return "bg-red-300";
+  if (count >= 1000 && count < 5000) return "bg-red-500";
+  return "bg-red-700"; // 5000 and above
+};
   const [hover, setHover] = useState({ idx: null, x: 0, y: 0 });
 
   const onMouseEnter = (e, idx) => {
@@ -74,8 +73,7 @@ const GitHubContributionGrid = ({ daysToShow = 365 }) => {
             whiteSpace: "nowrap",
           }}
         >
-          {format(data[hover.idx].date, "MMM d, yyyy")} –{" "}
-          {data[hover.idx].count} commits
+          {format(data[hover.idx].date, "MMM d, yyyy")} : Rs {data[hover.idx].count} 
         </div>
       )}
     </>
