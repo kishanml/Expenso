@@ -14,3 +14,5 @@ tzdata
 gunicorn
 python-dotenv
 django-admin-interface
+
+pandas

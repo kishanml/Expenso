@@ -1,15 +1,22 @@
+import os
+import pandas as pd
+
+from django.utils import timezone
 from django.shortcuts import render
+from django.http.response import Http404
+from datetime import timedelta, time,datetime
+from django.shortcuts import get_object_or_404
+from django.core.files.storage import default_storage
+
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-from expense_manager.serializers import *
-from django.http.response import Http404
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-import pandas as pd
-from django.utils import timezone
-from datetime import timedelta, time,datetime
+
+
+from expense_manager.serializers import *
+from .utils import get_sbi_statement_df, convert_to_expenso_df
 
 
 
@@ -156,39 +163,50 @@ class ExpenseManagerView(APIView):
                 return Response(ret, status= status.HTTP_400_BAD_REQUEST)
             return Response(ret, status= status.HTTP_200_OK)
              
-        
-    # def add_new_expense(self, expense_data, user = None):
-    #     try:
-    #         expense_data["user"] = user.id
-    #         serializer = ExpenseSerializer(data=expense_data)
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             return {"error": False, "msg": "Expense added successfully", "data": serializer.data}
-    #         else:
-    #             return {"error": True, "msg": serializer.errors, "data": None}
-    #     except Exception as e:
-    #         return {"error": True, "msg": str(e), "data": None}
-        
-        
-    # def post(self, request):
-    #     user = request.user
-    #     expense_data = request.data
-    #     ret = self.add_new_expense(expense_data, user)
-    #     if ret["error"]:
-    #         return Response(ret, status= status.HTTP_400_BAD_REQUEST)
-    #     return Response(ret, status= status.HTTP_201_CREATED)
-
 
     def add_new_expense(self, expense_data, user=None, file=None):
         try:
             expense_data["user"] = user.id
 
             if file:
-                if file.name.endswith(".xlsx"):
+            
+                if file.name.endswith('.pdf'):
+
+                    saved_path = default_storage.save(f"temp/{file.name}", file)
+
+                    real_path = default_storage.path(saved_path)
+                    print("Path saved:", real_path)
+                            
+                    try:
+                        statement = get_sbi_statement_df(real_path)
+                        print(statement)
+                        expense_df = convert_to_expenso_df(statement,bank='sbi')
+                        expense_data = expense_df.to_dict('records')
+                        print(expense_df)
+
+                        for expense in expense_data:
+                            expense['user']=user.id
+                            serializer = ExpenseSerializer(data=expense)
+                            if serializer.is_valid():
+                                serializer.save()
+                            else:
+                                return {"error": True, "msg": serializer.errors, "data": None}
+
+                    except Exception as e:
+                        print(e)
+
+                    finally:
+
+                        if default_storage.exists(saved_path):
+                            default_storage.delete(saved_path)
+                            print("File removed from storage:", saved_path)
+                            
+                elif file.name.endswith(".xlsx"):
+
                     df = pd.read_excel(file,index_col=[0])
-                    print(df)
                     df['transaction_date'] = pd.to_datetime(df['transaction_date'])
                     expense_data = df.to_dict('records')
+
                     for expense in expense_data:
                         expense['user']=user.id
                         serializer = ExpenseSerializer(data=expense)
